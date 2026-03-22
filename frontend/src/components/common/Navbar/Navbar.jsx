@@ -1,14 +1,18 @@
-import React from 'react'
-import SearchBar from './SearchBar'
-import { Globe, User, Menu } from 'lucide-react'; // Optional: for the profile section
+import React from "react";
+import SearchBar from "./SearchBar";
+import { Globe, User, Menu } from "lucide-react"; // Optional: for the profile section
+import { useNavigate } from "react-router-dom";
 
 function Navbar() {
+  const navigate = useNavigate();
+  const handleBecomeHost  = () => {
+    navigate("/WelcomeListing");
+  };
   return (
     <nav className="sticky top-0 z-50 w-full bg-white border-b border-gray-100 shadow-sm">
       {/* Container to keep content centered on large screens */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row items-center justify-between py-1 gap-4 md:gap-0">
-          
           {/* 1. Logo Section */}
           <div className="flex-shrink-0 cursor-pointer">
             <h1 className="text-2xl font-black tracking-tighter text-black uppercase">
@@ -23,13 +27,16 @@ function Navbar() {
 
           {/* 3. Profile & Utility Section (Right) */}
           <div className="hidden md:flex items-center space-x-4">
-            <button className="text-sm font-semibold py-3 px-4 rounded-full hover:bg-gray-100 transition-colors">
+            <button
+              onClick={handleBecomeHost }
+              className="text-sm font-semibold py-3 px-4 rounded-full hover:bg-gray-100 transition-colors"
+            >
               Become a host
             </button>
             <button className="p-3 rounded-full hover:bg-gray-100 transition-colors">
               <Globe size={18} />
             </button>
-            
+
             {/* User Menu Button */}
             <button className="flex items-center gap-3 p-2 pl-3 border border-gray-200 rounded-full hover:shadow-md transition-shadow">
               <Menu size={18} strokeWidth={2.5} />
@@ -38,11 +45,10 @@ function Navbar() {
               </div>
             </button>
           </div>
-
         </div>
       </div>
     </nav>
-  )
+  );
 }
 
-export default Navbar
+export default Navbar;
