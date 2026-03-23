@@ -2,6 +2,7 @@ import React from "react";
 import SearchBar from "./SearchBar";
 import { Globe, User, Menu } from "lucide-react"; // Optional: for the profile section
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -27,12 +28,14 @@ function Navbar() {
 
           {/* 3. Profile & Utility Section (Right) */}
           <div className="hidden md:flex items-center space-x-4">
-            <button
-              onClick={handleBecomeHost }
+
+            <Link to="/create-listing">
+              <button
               className="text-sm font-semibold py-3 px-4 rounded-full hover:bg-gray-100 transition-colors"
             >
               Become a host
             </button>
+            </Link>
             <button className="p-3 rounded-full hover:bg-gray-100 transition-colors">
               <Globe size={18} />
             </button>
