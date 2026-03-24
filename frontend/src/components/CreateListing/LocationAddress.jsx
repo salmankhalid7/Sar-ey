@@ -1,75 +1,61 @@
 import React from "react";
+import { useListing } from "../../context/ListingContext";
 
-function LocationAddress({
-  data,
-  updateField,
-  nextStep,
-  prevStep
-}) {
+function LocationAddress() {
+  const { state, setField, nextStep, prevStep } = useListing();
 
   return (
-    <div>
-
+    <div style={{ padding: "20px", maxWidth: "500px", margin: "auto" }}>
       <h2>Location & Address</h2>
 
       {/* Country */}
-      <div>
+      <div style={{ margin: "10px 0" }}>
         <label>Country</label>
-
         <input
           type="text"
           placeholder="Enter Country"
-          value={data.country || ""}
-          onChange={(e) =>
-            updateField("country", e.target.value)
-          }
+          value={state.country}
+          onChange={(e) => setField("country", e.target.value)}
+          style={{ width: "100%", padding: "8px", marginTop: "5px" }}
         />
       </div>
 
       {/* City */}
-      <div>
+      <div style={{ margin: "10px 0" }}>
         <label>City</label>
-
         <input
           type="text"
           placeholder="Enter City"
-          value={data.location}
-          onChange={(e) =>
-            updateField("location", e.target.value)
-          }
+          value={state.location}
+          onChange={(e) => setField("location", e.target.value)}
+          style={{ width: "100%", padding: "8px", marginTop: "5px" }}
         />
       </div>
 
-      {/* Address */}
-      <div>
+      {/* Full Address */}
+      <div style={{ margin: "10px 0" }}>
         <label>Full Address</label>
-
         <input
           type="text"
           placeholder="Enter Full Address"
-          value={data.address}
-          onChange={(e) =>
-            updateField("address", e.target.value)
-          }
+          value={state.address}
+          onChange={(e) => setField("address", e.target.value)}
+          style={{ width: "100%", padding: "8px", marginTop: "5px" }}
         />
       </div>
 
       {/* Navigation Buttons */}
-      <div>
-
-        <button onClick={prevStep}>
-          Back
-        </button>
-
-        <button onClick={nextStep}>
+      <div style={{ marginTop: "20px" }}>
+        <button onClick={prevStep} style={{ marginRight: "10px" }}>Back</button>
+        <button 
+          onClick={nextStep} 
+          disabled={!state.country || !state.location || !state.address}
+        >
           Next
         </button>
-
       </div>
-
     </div>
   );
-
 }
 
 export default LocationAddress;

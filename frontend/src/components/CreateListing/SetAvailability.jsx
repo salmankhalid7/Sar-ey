@@ -1,81 +1,67 @@
 import React, { useState } from "react";
+import { useListing } from "../../context/ListingContext";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
-function SetAvailability({ data, updateField, nextStep, prevStep }) {
-  const [dates, setDates] = useState(data.availability || []);
+function SetAvailability() {
+  const { state, setField, prevStep, resetListing } = useListing();
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
-  const handleAddDate = (e) => {
-    const selectedDate = e.target.value;
-    if (!dates.includes(selectedDate)) {
-      const updated = [...dates, selectedDate].sort();
-      setDates(updated);
-      updateField("availability", updated);
+  const handleSave = () => {
+    if (startDate && endDate) {
+      setField("availability", [startDate, endDate]);
+      alert("Availability set successfully!");
+      resetListing(); // optional: reset workflow after final step
+    } else {
+      alert("Please select both start and end dates.");
     }
   };
 
-  const handleRemoveDate = (date) => {
-    const updated = dates.filter((d) => d !== date);
-    setDates(updated);
-    updateField("availability", updated);
-  };
-
   return (
-    <div>
+    <div style={{ padding: "20px", maxWidth: "500px", margin: "auto" }}>
       <h2>Set Availability</h2>
 
-      <input
-        type="date"
-        onChange={handleAddDate}
-        style={{ marginBottom: "10px" }}
-      />
-
-      <div style={{ marginTop: "10px", display: "flex", flexWrap: "wrap", gap: "5px" }}>
-        {dates.map((date, idx) => (
-          <div
-            key={idx}
-            style={{
-              padding: "5px 10px",
-              border: "1px solid #ccc",
-              borderRadius: "5px",
-              display: "flex",
-              alignItems: "center",
-              gap: "5px"
-            }}
-          >
-            {date}
-            <button
-              onClick={() => handleRemoveDate(date)}
-              style={{
-                background: "red",
-                color: "#fff",
-                border: "none",
-                borderRadius: "50%",
-                width: "18px",
-                height: "18px",
-                cursor: "pointer"
-              }}
-            >
-              ×
-            </button>
-          </div>
-        ))}
+      <div style={{ margin: "10px 0" }}>
+        <label>Start Date</label>
+        <DatePicker
+          selected={startDate}
+          onChange={(date) => setStartDate(date)}
+          selectsStart
+          startDate={startDate}
+          endDate={endDate}
+          minDate={new Date()}
+          placeholderText="Select start date"
+          style={{ width: "100%" }}
+        />
       </div>
 
-      {/* Navigation Buttons */}
+      <div style={{ margin: "10px 0" }}>
+        <label>End Date</label>
+        <DatePicker
+          selected={endDate}
+          onChange={(date) => setEndDate(date)}
+          selectsEnd
+          startDate={startDate}
+          endDate={endDate}
+          minDate={startDate || new Date()}
+          placeholderText="Select end date"
+          style={{ width: "100%" }}
+        />
+      </div>
+
       <div style={{ marginTop: "20px" }}>
-        <button onClick={prevStep}>Back</button>
-        <button
-          onClick={() => {
-            if (dates.length === 0) {
-              alert("Please select at least one date");
-              return;
-            }
-            nextStep();
-          }}
-          style={{ marginLeft: "10px" }}
-        >
-          Next
+        <button onClick={prevStep} style={{ marginRight: "10px" }}>Back</button>
+        <button onClick={handleSave} style={{ background: "green", color: "#fff", padding: "8px 12px" }}>
+          Save Availability
         </button>
       </div>
+
+      {state.availability.length > 0 && (
+        <p style={{ marginTop: "15px" }}>
+          Selected: {state.availability[0].toDateString()} → {state.availability[1].toDateString()}
+        </p>
+      )}
     </div>
   );
 }

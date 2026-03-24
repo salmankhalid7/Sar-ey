@@ -1,49 +1,49 @@
-import React, { useState } from "react";
+import React from "react";
+import { useListing } from "../../context/ListingContext";
 
-function Amenities({ data, updateField, nextStep, prevStep }) {
+const AMENITIES_LIST = [
+  "WiFi",
+  "Air Conditioning",
+  "Heating",
+  "Kitchen",
+  "Parking",
+  "Pool",
+  "Gym",
+  "Washer",
+  "Dryer",
+  "Pet Friendly"
+];
 
-  // Define available amenities
-  const amenityOptions = [
-    "WiFi",
-    "Air Conditioning",
-    "Parking",
-    "Kitchen",
-    "TV",
-    "Washer",
-    "Heating",
-    "Pool",
-    "Gym",
-    "Hot Tub"
-  ];
+function Amenities() {
+  const { state, setField, nextStep, prevStep } = useListing();
 
-  const [selected, setSelected] = useState(data.amenities || []);
-
-  const toggleAmenity = (amenity) => {
-    let updated;
-    if (selected.includes(amenity)) {
-      updated = selected.filter((a) => a !== amenity);
+  const handleToggle = (amenity) => {
+    const current = state.amenities || [];
+    if (current.includes(amenity)) {
+      setField(
+        "amenities",
+        current.filter((a) => a !== amenity)
+      );
     } else {
-      updated = [...selected, amenity];
+      setField("amenities", [...current, amenity]);
     }
-    setSelected(updated);
-    updateField("amenities", updated);
   };
 
   return (
-    <div>
+    <div style={{ padding: "20px", maxWidth: "500px", margin: "auto" }}>
       <h2>Select Amenities</h2>
 
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-        {amenityOptions.map((amenity) => (
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginTop: "10px" }}>
+        {AMENITIES_LIST.map((amenity) => (
           <button
             key={amenity}
-            onClick={() => toggleAmenity(amenity)}
+            onClick={() => handleToggle(amenity)}
             style={{
               padding: "8px 12px",
-              border: selected.includes(amenity) ? "2px solid #000" : "1px solid #ccc",
-              background: selected.includes(amenity) ? "#e0e0e0" : "#fff",
+              border: state.amenities.includes(amenity) ? "2px solid green" : "1px solid #ccc",
               borderRadius: "5px",
-              cursor: "pointer"
+              cursor: "pointer",
+              background: state.amenities.includes(amenity) ? "#e0ffe0" : "#fff"
             }}
           >
             {amenity}
@@ -51,10 +51,9 @@ function Amenities({ data, updateField, nextStep, prevStep }) {
         ))}
       </div>
 
-      {/* Navigation */}
       <div style={{ marginTop: "20px" }}>
-        <button onClick={prevStep}>Back</button>
-        <button onClick={nextStep} style={{ marginLeft: "10px" }}>Next</button>
+        <button onClick={prevStep} style={{ marginRight: "10px" }}>Back</button>
+        <button onClick={nextStep} disabled={state.amenities.length === 0}>Next</button>
       </div>
     </div>
   );

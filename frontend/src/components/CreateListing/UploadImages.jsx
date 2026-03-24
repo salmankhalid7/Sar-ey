@@ -1,63 +1,52 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
+import { useListing } from "../../context/ListingContext";
 
-function UploadImages({ data, updateField, nextStep, prevStep }) {
-
+function UploadImages() {
+  const { state, setField, nextStep, prevStep } = useListing();
   const fileInputRef = useRef();
-  const [preview, setPreview] = useState(data.images || []);
 
-  const handleFiles = (files) => {
-    const imagesArray = Array.from(files).map((file) => ({
-      file,
-      url: URL.createObjectURL(file)
-    }));
-
-    const updated = [...preview, ...imagesArray];
-    setPreview(updated);
-
-    // Save only File objects in listingData
-    updateField("images", updated.map((img) => img.file));
+  // Handle file selection
+  const handleFiles = (e) => {
+    const files = Array.from(e.target.files);
+    const urls = files.map((file) => URL.createObjectURL(file));
+    setField("images", [...(state.images || []), ...urls]);
   };
 
-  const handleRemove = (index) => {
-    const updated = [...preview];
-    updated.splice(index, 1);
-    setPreview(updated);
-    updateField("images", updated.map((img) => img.file));
+  // Remove an image
+  const removeImage = (url) => {
+    setField(
+      "images",
+      state.images.filter((img) => img !== url)
+    );
   };
 
   return (
-    <div>
+    <div style={{ padding: "20px", maxWidth: "600px", margin: "auto" }}>
       <h2>Upload Images</h2>
 
-      <div style={{ marginBottom: "10px" }}>
-        <input
-          type="file"
-          multiple
-          accept="image/*"
-          ref={fileInputRef}
-          style={{ display: "none" }}
-          onChange={(e) => handleFiles(e.target.files)}
-        />
-        <button onClick={() => fileInputRef.current.click()}>
-          Select Images
-        </button>
-      </div>
+      <input
+        type="file"
+        multiple
+        accept="image/*"
+        ref={fileInputRef}
+        onChange={handleFiles}
+        style={{ margin: "10px 0" }}
+      />
 
-      {/* Preview */}
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-        {preview.map((img, idx) => (
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginTop: "10px" }}>
+        {state.images && state.images.map((img, idx) => (
           <div key={idx} style={{ position: "relative" }}>
             <img
-              src={img.url}
-              alt={`preview-${idx}`}
-              style={{ width: "120px", height: "80px", objectFit: "cover", borderRadius: "5px" }}
+              src={img}
+              alt={`Property ${idx + 1}`}
+              style={{ width: "100px", height: "100px", objectFit: "cover", borderRadius: "5px" }}
             />
             <button
-              onClick={() => handleRemove(idx)}
+              onClick={() => removeImage(img)}
               style={{
                 position: "absolute",
-                top: "0",
-                right: "0",
+                top: "-5px",
+                right: "-5px",
                 background: "red",
                 color: "#fff",
                 border: "none",
@@ -73,21 +62,9 @@ function UploadImages({ data, updateField, nextStep, prevStep }) {
         ))}
       </div>
 
-      {/* Navigation */}
       <div style={{ marginTop: "20px" }}>
-        <button onClick={prevStep}>Back</button>
-        <button
-          onClick={() => {
-            if (preview.length === 0) {
-              alert("Please upload at least one image");
-              return;
-            }
-            nextStep();
-          }}
-          style={{ marginLeft: "10px" }}
-        >
-          Next
-        </button>
+        <button onClick={prevStep} style={{ marginRight: "10px" }}>Back</button>
+        <button onClick={nextStep} disabled={!state.images || state.images.length === 0}>Next</button>
       </div>
     </div>
   );

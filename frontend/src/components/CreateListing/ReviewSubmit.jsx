@@ -1,53 +1,53 @@
 import React from "react";
+import { useListing } from "../../context/ListingContext";
 
-function ReviewSubmit({ data, prevStep, submitListing }) {
+function ReviewSubmit() {
+  const { state, prevStep, resetListing } = useListing();
+
+  const handleSubmit = () => {
+    // Here you would send 'state' to your backend API
+    console.log("Submitting Listing:", state);
+    alert("Listing submitted successfully!");
+    resetListing(); // reset workflow
+  };
 
   return (
-    <div>
+    <div style={{ padding: "20px", maxWidth: "600px", margin: "auto" }}>
       <h2>Review Your Listing</h2>
 
-      <div style={{ marginBottom: "20px" }}>
-        <h3>Property Type:</h3>
-        <p>{data.category || "-"}</p>
-
-        <h3>Location:</h3>
-        <p>{data.address}, {data.location}, {data.country}</p>
-
-        <h3>Basic Details:</h3>
-        <p>Bedrooms: {data.bedrooms}</p>
-        <p>Bathrooms: {data.bathrooms}</p>
-        <p>Guests: {data.guests}</p>
-        <p>Price per Night: {data.price}</p>
-
-        <h3>Amenities:</h3>
-        <p>{data.amenities.length ? data.amenities.join(", ") : "-"}</p>
-
-        <h3>Images:</h3>
-        <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-          {data.images.length > 0 ? (
-            data.images.map((img, idx) => (
-              <img
-                key={idx}
-                src={URL.createObjectURL(img)}
-                alt={`listing-${idx}`}
-                style={{ width: "120px", height: "80px", objectFit: "cover", borderRadius: "5px" }}
-              />
-            ))
-          ) : (
-            <p>No images uploaded</p>
-          )}
-        </div>
-
-        <h3>Availability:</h3>
-        <p>{data.availability.length ? data.availability.join(", ") : "-"}</p>
+      <div style={{ margin: "10px 0" }}>
+        <strong>Category:</strong> {state.category || "-"}
       </div>
 
-      <div>
-        <button onClick={prevStep}>Back</button>
-        <button
-          onClick={submitListing}
-          style={{ marginLeft: "10px" }}
-        >
+      <div style={{ margin: "10px 0" }}>
+        <strong>Location:</strong> {state.country}, {state.location}, {state.address}
+      </div>
+
+      <div style={{ margin: "10px 0" }}>
+        <strong>Basic Info:</strong> {state.bedrooms} Bed / {state.bathrooms} Bath / {state.guests} Guests
+      </div>
+
+      <div style={{ margin: "10px 0" }}>
+        <strong>Amenities:</strong> {state.amenities.length ? state.amenities.join(", ") : "-"}
+      </div>
+
+      <div style={{ margin: "10px 0" }}>
+        <strong>Images:</strong>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginTop: "5px" }}>
+          {state.images && state.images.map((img, idx) => (
+            <img
+              key={idx}
+              src={img}
+              alt={`Property ${idx + 1}`}
+              style={{ width: "100px", height: "100px", objectFit: "cover", borderRadius: "5px" }}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div style={{ marginTop: "20px" }}>
+        <button onClick={prevStep} style={{ marginRight: "10px" }}>Back</button>
+        <button onClick={handleSubmit} style={{ background: "green", color: "#fff", padding: "8px 12px" }}>
           Submit Listing
         </button>
       </div>
